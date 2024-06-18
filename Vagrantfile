@@ -2,7 +2,6 @@
 # vi: set ft=ruby :
 
 vm_name = "rhel-test"
-iso_build_command = "hdiutil makehybrid -iso -joliet -default-volume-name OEMDRV -o ks.iso ks_iso"
 
 Vagrant.configure("2") do |config|
   config.vm.define vm_name
