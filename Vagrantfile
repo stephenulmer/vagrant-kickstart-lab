@@ -1,8 +1,21 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-vm_name = "rhel-test"
+iso_install = "rhel-9.4-aarch64-dvd.iso"
+vm_name_default = "rhel-test"
+vm_name_file = ".vagrant_vm_name"
 
+## Use contents of vm_name_file if it exists, otherwise use vm_name_default
+vm_name = File.file?(vm_name_file) ? IO.read(vm_name_file).strip : vm_name_default
+
+## Use "oemdrv.iso" as the second ISO file if it exists, otherwise fall back to our
+## locally-included "ks.iso".
+iso_oemdrv = "oemdrv.iso"
+iso_ks = File.exist?(iso_oemdrv) ? iso_oemdrv : "ks.iso"
+
+##
+## Regular Vagrant...
+##
 Vagrant.configure("2") do |config|
   config.vm.define vm_name
   config.vm.box = "slu/empty"
@@ -18,8 +31,13 @@ Vagrant.configure("2") do |config|
     prl.name = vm_name
     prl.check_guest_tools = false
     prl.customize "post-import", ["set", :id, "--startup-view", "window"]
-    prl.customize "post-import", ["set", :id, "--device-add", "cdrom", "--image", "rhel-9.4-aarch64-dvd.iso", "--connect"]
-    prl.customize "post-import", ["set", :id, "--device-add", "cdrom", "--image", "ks.iso", "--connect"]
+    prl.customize "post-import", ["set", :id, "--device-add", "cdrom", "--image", iso_install, "--connect"]
+    prl.customize "post-import", ["set", :id, "--device-add", "cdrom", "--image", iso_ks, "--connect"]
+  end
+
+  config.trigger.before :up do |trigger|
+    trigger.name = "Select Configuration ISO"
+    trigger.info = "Using #{iso_ks} as configuration ISO."
   end
 
   config.trigger.before :up do |trigger|
