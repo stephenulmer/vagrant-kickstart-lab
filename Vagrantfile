@@ -19,6 +19,7 @@ iso_ks = File.exist?(iso_oemdrv) ? iso_oemdrv : "ks.iso"
 Vagrant.configure("2") do |config|
   config.vm.define vm_name
   config.vm.box = "slu/empty"
+  config.vm.box_url = "https://filedn.com/l5sQTlB8iglSMQibt69Jdj8/boxes/slu-empty.json"
   config.vm.box_check_update = false
   config.vm.hostname = vm_name
   config.vm.boot_timeout = 1800
