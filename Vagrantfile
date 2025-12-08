@@ -46,4 +46,15 @@ Vagrant.configure("2") do |config|
     trigger.run = {inline: "make ks.iso" }
   end
 
+  config.vm.provision "setup", type: "shell", privileged: false, run: "never", inline:<<-SHELL
+    cd ~/project-setup
+    ansible-playbook ck.setup.setup_control_node
+    ansible-playbook ck.setup.setup_aap
+  SHELL
+
+  config.vm.provision "aap", type: "shell", privileged: false, run: "never", inline:<<-SHELL
+    cd ~/ansible-automation*
+    ansible-playbook -i inventory ansible.containerized_installer.install
+  SHELL
+
 end
