@@ -1,8 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-iso_install = "rhel-9.4-aarch64-dvd.iso"
-vm_name_default = "rhel-test"
+iso_install = "rhel-boot.iso"
+vm_name_default = File.basename(Dir.pwd)
 vm_name_file = ".vagrant_vm_name"
 
 ## Use contents of vm_name_file if it exists, otherwise use vm_name_default
@@ -24,9 +24,6 @@ Vagrant.configure("2") do |config|
   config.vm.hostname = vm_name
   config.vm.boot_timeout = 1800
   config.vm.synced_folder ".", "/vagrant", disabled: true
-  config.ssh.username = "ansible"
-  config.ssh.connect_timeout = 30
-  config.ssh.insert_key = "false"
 
   config.vm.provider "parallels" do |prl|
     prl.name = vm_name
@@ -45,16 +42,5 @@ Vagrant.configure("2") do |config|
     trigger.name = "Kickstart ISO"
     trigger.run = {inline: "make ks.iso" }
   end
-
-  config.vm.provision "setup", type: "shell", privileged: false, run: "never", inline:<<-SHELL
-    cd ~/project-setup
-    ansible-playbook ck.setup.setup_control_node
-    ansible-playbook ck.setup.setup_aap
-  SHELL
-
-  config.vm.provision "aap", type: "shell", privileged: false, run: "never", inline:<<-SHELL
-    cd ~/ansible-automation*
-    ansible-playbook -i inventory ansible.containerized_installer.install
-  SHELL
 
 end
