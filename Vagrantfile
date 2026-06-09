@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 
 iso_install = "rhel-boot.iso"
-vm_name_default = File.basename(Dir.pwd)
+vm_name_default = File.basename(File.dirname(__FILE__))
 vm_name_file = ".vagrant_vm_name"
 
 ## Use contents of vm_name_file if it exists, otherwise use vm_name_default
